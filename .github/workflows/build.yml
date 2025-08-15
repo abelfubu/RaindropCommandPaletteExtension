@@ -44,7 +44,8 @@ jobs:
       - name: Prepare artifact
         run: |
           New-Item -Type Directory build
-          Get-ChildItem -Path Raindrops -Recurse -Include *.msix | ForEach-Object {
+          echo "Copying files to build directory..."
+          Get-ChildItem -Path . -Recurse -Include *.msix | ForEach-Object {
             echo $_.FullName
             Copy-Item -Path $_.FullName -Destination build
           }
