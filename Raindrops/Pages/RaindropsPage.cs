@@ -1,4 +1,3 @@
-using System;
 using Meziantou.Framework.Win32;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
