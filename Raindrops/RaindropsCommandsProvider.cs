@@ -4,6 +4,7 @@
 
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
+using Raindrops.Commands;
 
 namespace Raindrops;
 
@@ -17,6 +18,7 @@ public partial class RaindropsCommandsProvider : CommandProvider
         Icon = IconHelpers.FromRelativePath("Assets\\StoreLogo.png");
         _commands = [
             new CommandItem(new RaindropsPage()) { Title = DisplayName },
+            new CommandItem(new SetTokenCommand()),
         ];
     }
 
