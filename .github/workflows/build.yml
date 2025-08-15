@@ -55,7 +55,7 @@ jobs:
       - name: Prepare artifact
         run: |
           New-Item -Type Directory build
-          Get-ChildItem -Path Raindrops -Recurse -Include *.msix | Where-Object { $_.FullName -notmatch "\\Dependencies\\" } | ForEach-Object {
+          Get-ChildItem -Path . -Recurse -Include *.msix | Where-Object { $_.FullName -notmatch "\\Dependencies\\" } | ForEach-Object {
             Copy-Item -Path $_.FullName -Destination build
           }
 
