@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Raindrops (Package)": {
+      "commandName": "MsixPackage",
+      "doNotLaunchApp": true
+    },
+    "Raindrops (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
