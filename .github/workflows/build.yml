@@ -35,8 +35,6 @@ jobs:
       - name: Setup msbuild.exe
         uses: microsoft/setup-msbuild@v2
 
-      
-
       - name: Restore packages
         run: msbuild Raindrops.sln /t:Restore /p:Configuration=Release
 
@@ -46,7 +44,7 @@ jobs:
       - name: Prepare artifact
         run: |
           New-Item -Type Directory build
-          Get-ChildItem -Path . -Recurse -Include *.msix | Where-Object { $_.FullName -match "\AppxPackages" } | ForEach-Object {
+          Get-ChildItem -Path Raindrops\AppxPackages -Recurse -Include *.msix | ForEach-Object {
             Copy-Item -Path $_.FullName -Destination build
           }
 
@@ -57,7 +55,6 @@ jobs:
           path: build
 
   release:
-    if: startsWith(github.ref, 'refs/tags/')
     needs: build
     runs-on: ubuntu-latest
     steps:
