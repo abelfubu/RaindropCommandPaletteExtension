@@ -44,7 +44,7 @@ jobs:
       - name: Prepare artifact
         run: |
           New-Item -Type Directory build
-          Get-ChildItem -Path . -Recurse -Include *.msix | ForEach-Object {
+          Get-ChildItem -Path Raindrops -Recurse -Include *.msix | ForEach-Object {
             Copy-Item -Path $_.FullName -Destination build
           }
 
@@ -53,15 +53,3 @@ jobs:
         with:
           name: Build-${{env.VERSION}}-${{matrix.platform}}
           path: build
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download all workflow run artifacts
-        uses: actions/download-artifact@v4
-
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: Build*/*
