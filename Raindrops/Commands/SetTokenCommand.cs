@@ -15,6 +15,7 @@ internal sealed class SetTokenCommand : ICommand
     public string Title { get; } = "Set Raindrop.io API Token";
     public string Subtitle { get; } = "Sets the API token for Raindrop.io";
     public ICommandItemIcon? Icon { get; }
+    public ICommandItem? Result { get; private set; }
 
     private readonly CommandInput _tokenInput = new("Token", "Enter your Raindrop.io API token");
 
@@ -23,13 +24,17 @@ internal sealed class SetTokenCommand : ICommand
         Icon = IconHelpers.FromRelativePath("Assets\\StoreLogo.png");
     }
 
-    public CommandInput[] Inputs => [_tokenInput];
+    public CommandInput[] GetInputs(IInputContext context)
+    {
+        return [_tokenInput];
+    }
 
     public Task ExecuteAsync(IExecuteContext context)
     {
         var token = context.GetInputValue(_tokenInput);
         if (string.IsNullOrWhiteSpace(token))
         {
+            Result = new CommandItem(new NoOpCommand()) { Title = "Token not set." };
             return Task.CompletedTask;
         }
 
@@ -39,6 +44,7 @@ internal sealed class SetTokenCommand : ICommand
             secret: token,
             persistence: CredentialPersistence.LocalMachine);
 
+        Result = new CommandItem(new NoOpCommand()) { Title = "Token saved successfully." };
         return Task.CompletedTask;
     }
 }
