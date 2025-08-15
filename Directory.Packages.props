@@ -13,5 +13,6 @@
     <PackageVersion Include="Shmuelie.WinRTServer" Version="2.1.1" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
     <PackageVersion Include="System.Text.Json" Version="9.0.5" />
+    <PackageVersion Include="Meziantou.Framework.Win32.CredentialManager" Version="1.7.4" />
   </ItemGroup>
 </Project>

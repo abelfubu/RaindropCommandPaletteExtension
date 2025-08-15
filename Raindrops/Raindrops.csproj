@@ -43,7 +43,7 @@
     <PackageReference Include="Microsoft.Web.WebView2" />
     <PackageReference Include="System.Text.Json" />
     <PackageReference Include="Shmuelie.WinRTServer" />
-    <PackageReference Include="CredentialManagement" />
+    <PackageReference Include="Meziantou.Framework.Win32.CredentialManager" />
   </ItemGroup>
 
   <!--

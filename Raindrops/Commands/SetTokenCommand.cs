@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using CredentialManagement;
+using Meziantou.Framework.Win32;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
@@ -33,14 +33,11 @@ internal sealed class SetTokenCommand : ICommand
             return Task.CompletedTask;
         }
 
-        using var credential = new Credential
-        {
-            Target = "Raindrop.io",
-            Username = "API_TOKEN",
-            Password = token,
-            PersistanceType = PersistanceType.LocalComputer
-        };
-        credential.Save();
+        CredentialManager.WriteCredential(
+            applicationName: "Raindrop.io",
+            userName: "API_TOKEN",
+            secret: token,
+            persistence: CredentialPersistence.LocalMachine);
 
         return Task.CompletedTask;
     }

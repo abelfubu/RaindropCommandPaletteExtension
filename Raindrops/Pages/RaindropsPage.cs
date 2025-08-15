@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
-using CredentialManagement;
+using Meziantou.Framework.Win32;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
@@ -48,8 +48,8 @@ internal sealed partial class RaindropsPage : ListPage
 
     private async Task<Raindrop[]?> GetBookmarksAsync()
     {
-        using var credential = new Credential { Target = "Raindrop.io", Username = "API_TOKEN" };
-        if (!credential.Load())
+        var credential = CredentialManager.ReadCredential(applicationName: "Raindrop.io");
+        if (credential is null)
         {
             return null;
         }
