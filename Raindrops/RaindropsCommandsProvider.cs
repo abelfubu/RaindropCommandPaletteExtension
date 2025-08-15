@@ -1,10 +1,7 @@
-// Copyright (c) Microsoft Corporation
-// The Microsoft Corporation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 using Raindrops.Commands;
+using Raindrops.Pages;
 
 namespace Raindrops;
 
@@ -14,11 +11,12 @@ public partial class RaindropsCommandsProvider : CommandProvider
 
     public RaindropsCommandsProvider()
     {
-        DisplayName = "Raindrops";
-        Icon = IconHelpers.FromRelativePath("Assets\\StoreLogo.png");
+        DisplayName = RaindropsPage.PageTitle; ;
+        Icon = new(RaindropsPage.IconUrl);
         _commands = [
-            new CommandItem(new RaindropsPage()) { Title = DisplayName },
-            new CommandItem(new SetTokenCommand()),
+            new CommandItem(new RaindropsPage()) { Title = DisplayName, Subtitle = RaindropsPage.PageSubtitle },
+            new CommandItem(new SetRaindropTokenPage()) { Title = SetRaindropTokenPage.PageTitle },
+            new CommandItem(new ResetRaindropTokenCommand()) { Title = ResetRaindropTokenCommand.Title },
         ];
     }
 

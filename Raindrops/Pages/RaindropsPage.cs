@@ -1,81 +1,86 @@
-// Copyright (c) Microsoft Corporation
-// The Microsoft Corporation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text.Json;
-using System.Threading.Tasks;
+using System;
 using Meziantou.Framework.Win32;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
+using Raindrops.Constants;
+using Raindrops.Helpers;
+using Raindrops.Pages;
+using Raindrops.Services;
 
 namespace Raindrops;
 
-internal sealed partial class RaindropsPage : ListPage
+internal sealed partial class RaindropsPage : DynamicListPage, IDisposable
 {
-    private static readonly HttpClient httpClient = new();
-
-    
+    public const string IconUrl = "https://help.raindrop.io/brand/icon_raw.svg";
+    public const string PageId = "RaindropsPage";
+    public const string PageTitle = "Raindrops";
+    public const string PageSubtitle = "Your Raindrop.io Bookmarks";
+    private Credential? credential;
+    private ListItem[]? items;
+    private readonly Debouncer debouncer = new();
 
     public RaindropsPage()
     {
-        Icon = IconHelpers.FromRelativePath("Assets\\StoreLogo.png");
-        Title = "Raindrops";
-        Name = "Open";
+        Id = PageId;
+        Icon = new(IconUrl);
+        Title = PageTitle;
     }
 
     public override IListItem[] GetItems()
     {
-        // For demo, use synchronous blocking call; you can improve with async/await.
-        var bookmarks = GetBookmarksAsync().GetAwaiter().GetResult();
+        credential = CredentialManager.ReadCredential(Application.Name);
 
-        if (bookmarks is null)
+        if (credential?.Password is null)
         {
-            return [new ListItem(new NoOpCommand()) { Title = "API Token not configured. Use 'Raindrops: Set API Token' to configure it." }];
+            return [
+                new ListItem(new SetRaindropTokenPage())
+                {
+                    Title = SetRaindropTokenPage.PageTitle,
+                    Subtitle = "Set your Raindrop.io API Token"
+                }];
         }
 
-        // If no bookmarks, return placeholder
-        if (bookmarks.Length == 0)
+        if (items is not null)
+        {
+            return items;
+        }
+
+        items = RaindropService.GetBookmarksAsync(
+            searchTerm: SearchText,
+            raindropApiKey: credential.Password,
+            cancellationToken: debouncer.GetToken()).GetAwaiter().GetResult();
+
+        if (items?.Length == 0)
+        {
             return [new ListItem(new NoOpCommand()) { Title = "No bookmarks found." }];
-
-        // Map bookmarks to ListItems
-        return [.. bookmarks.Select(bookmark => new ListItem(
-            new OpenUrlCommand(bookmark.Link) { Name = bookmark.Title }))
-        ];
-    }
-
-    private async Task<Raindrop[]?> GetBookmarksAsync()
-    {
-        var credential = CredentialManager.ReadCredential(applicationName: "Raindrop.io");
-        if (credential is null)
-        {
-            return null;
         }
 
-        var request = new HttpRequestMessage(HttpMethod.Get, "https://api.raindrop.io/rest/v1/raindrops/0");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", credential.Password);
-
-        var response = await httpClient.SendAsync(request);
-        response.EnsureSuccessStatusCode();
-
-        var json = await response.Content.ReadAsStringAsync();
-        var raindropResponse = JsonSerializer.Deserialize<RaindropResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-        return raindropResponse?.Items ?? [];
+        return items ?? [];
     }
-}
 
-public class RaindropResponse
-{
-    public int Count { get; set; }
-    public Raindrop[] Items { get; set; } = [];
-}
+    public override async void UpdateSearchText(string oldSearch, string newSearch)
+    {
+        if (oldSearch == newSearch || items is null) return;
 
-public class Raindrop
-{
-    public string Title { get; set; } = string.Empty;
-    public string Link { get; set; } = string.Empty;
-    public string[] Tags { get; set; } = [];
+
+        await debouncer.DebounceAsync(async () =>
+        {
+            IsLoading = true;
+
+            items = await RaindropService.GetBookmarksAsync(
+                raindropApiKey: credential?.Password ?? string.Empty,
+                searchTerm: newSearch,
+                cancellationToken: debouncer.GetToken());
+
+            RaiseItemsChanged(items.Length);
+            IsLoading = false;
+
+        }, 300);
+
+    }
+
+    public void Dispose()
+    {
+        debouncer.Dispose();
+    }
 }
