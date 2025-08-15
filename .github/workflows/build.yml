@@ -45,7 +45,7 @@ jobs:
         run: |
           New-Item -Type Directory build
           echo "Copying files to build directory..."
-          Get-ChildItem -Path . -Recurse -Include *.msix | ForEach-Object {
+          Get-ChildItem -Path . -Recurse -Include *.msix | Where-Object { $_.FullName -notmatch "\\Dependencies\\" } | ForEach-Object {
             echo $_.FullName
             Copy-Item -Path $_.FullName -Destination build
           }
@@ -55,3 +55,16 @@ jobs:
         with:
           name: Build-${{env.VERSION}}-${{matrix.platform}}
           path: build
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Build*/*
