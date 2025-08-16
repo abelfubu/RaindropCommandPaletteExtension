@@ -38,7 +38,7 @@ jobs:
         run: |
           $manifestPath = "Raindrops\Package.appxmanifest"
           [xml]$manifest = Get-Content -Path $manifestPath
-          $manifest.Package.Identity.Version = "$(env:VERSION).0"
+          $manifest.Package.Identity.Version = "${{ env.VERSION }}.0"
           $manifest.Save($manifestPath)
 
       - name: Restore packages
