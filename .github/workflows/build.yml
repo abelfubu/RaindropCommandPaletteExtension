@@ -41,6 +41,13 @@ jobs:
       - name: Build Plugin
         run: msbuild Raindrops\Raindrops.csproj /p:Configuration=Release /p:Platform=${{matrix.platform}} /p:Version=${{env.VERSION}} /p:AppxPackageDir=AppxPackages\
 
+      - name: Modify version in manifest
+        run: |
+          $manifestPath = "Raindrops\Package.appxmanifest"
+          [xml]$manifest = Get-Content -Path $manifestPath
+          $manifest.Package.Identity.Version = $env:VERSION
+          $manifest.Save($manifestPath)
+
       - name: Prepare artifact
         run: |
           New-Item -Type Directory build
