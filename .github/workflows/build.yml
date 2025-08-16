@@ -35,18 +35,18 @@ jobs:
       - name: Setup msbuild.exe
         uses: microsoft/setup-msbuild@v2
 
-      - name: Restore packages
-        run: msbuild Raindrops.sln /t:Restore /p:Configuration=Release
-
-      - name: Build Plugin
-        run: msbuild Raindrops\Raindrops.csproj /p:Configuration=Release /p:Platform=${{matrix.platform}} /p:Version=${{env.VERSION}} /p:AppxPackageDir=AppxPackages\
-
       - name: Modify version in manifest
         run: |
           $manifestPath = "Raindrops\Package.appxmanifest"
           [xml]$manifest = Get-Content -Path $manifestPath
           $manifest.Package.Identity.Version = $env:VERSION
           $manifest.Save($manifestPath)
+
+      - name: Restore packages
+        run: msbuild Raindrops.sln /t:Restore /p:Configuration=Release
+
+      - name: Build Plugin
+        run: msbuild Raindrops\Raindrops.csproj /p:Configuration=Release /p:Platform=${{matrix.platform}} /p:Version=${{env.VERSION}} /p:AppxPackageDir=AppxPackages\
 
       - name: Prepare artifact
         run: |
