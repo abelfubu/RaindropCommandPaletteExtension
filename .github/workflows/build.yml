@@ -24,7 +24,7 @@ jobs:
       - name: Read version
         run: |
           [xml]$xml = Get-Content -Path Directory.Build.Props
-          $version = "$($env:GITHUB_REF -replace 'refs/tags/', '')".Trim()
+          $version = "$($env:GITHUB_REF -replace 'refs/tags/', '').0".Trim()
           echo "VERSION=$version" >> $env:GITHUB_ENV
 
       - name: Setup .NET
