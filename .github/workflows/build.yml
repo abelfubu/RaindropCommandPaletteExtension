@@ -23,8 +23,7 @@ jobs:
 
       - name: Read version
         run: |
-          [xml]$xml = Get-Content -Path Directory.Build.Props
-          $version = "$($env:GITHUB_REF -replace 'refs/tags/', '').0".Trim()
+          $version = "$($env:GITHUB_REF -replace 'refs/tags/', '')".Trim()
           echo "VERSION=$version" >> $env:GITHUB_ENV
 
       - name: Setup .NET
@@ -39,7 +38,7 @@ jobs:
         run: |
           $manifestPath = "Raindrops\Package.appxmanifest"
           [xml]$manifest = Get-Content -Path $manifestPath
-          $manifest.Package.Identity.Version = $env:VERSION
+          $manifest.Package.Identity.Version = "$(env:VERSION).0"
           $manifest.Save($manifestPath)
 
       - name: Restore packages
