@@ -10,8 +10,8 @@
   IgnorableNamespaces="uap uap3 rescap uap18">
 
   <Identity
-    Name="RaindropCommandPaletteExtension"
-    Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
+    Name="Abelfubu.RaindropCommandPaletteExtension"
+    Publisher="CN=E8E845FC-E721-4CAA-B5B6-2983ADBAD8D6"
     Version="0.0.1.0" />
   <!-- When you're ready to publish your extension, you'll need to change the
        Publisher= to match your own identity -->
