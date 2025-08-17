@@ -18,6 +18,24 @@ internal sealed partial class SetRaindropTokenForm : FormContent
     "version": "1.6",
     "body": [
         {
+            "type": "TextBlock",
+            "size": "medium",
+            "weight": "bolder",
+            "text": "Set Raindrop.io API Token",
+            "style": "heading",
+            "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "For this extension we need a test access token, for this you need to create an app in [Raindrop.io settings](https://app.raindrop.io/settings/integrations).\n\n
+  1. In the For Developers section click on + Create new app.\n
+  2. Set the app name, accept the Terms and Guidelines and click Create.\n
+  3. Click in the newly created app.\n
+  4. In the bottom of the form click on Create test token.\n
+  5. Copy the created token.\n",
+            "wrap": true
+        },
+        {
             "id": "token",
             "type": "Input.Text",
             "label": "Raindrop.io API Token",
@@ -40,9 +58,9 @@ internal sealed partial class SetRaindropTokenForm : FormContent
 """;
     }
 
-    public override CommandResult SubmitForm(string payload)
+    public override CommandResult SubmitForm(string inputs)
     {
-        var formInput = JsonNode.Parse(payload);
+        var formInput = JsonNode.Parse(inputs);
         if (formInput == null)
         {
             return CommandResult.GoHome();

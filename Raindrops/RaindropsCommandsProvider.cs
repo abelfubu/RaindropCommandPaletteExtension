@@ -11,7 +11,7 @@ public partial class RaindropsCommandsProvider : CommandProvider
 
     public RaindropsCommandsProvider()
     {
-        DisplayName = RaindropsPage.PageTitle; ;
+        DisplayName = RaindropsPage.PageTitle;
         Icon = new(RaindropsPage.IconUrl);
         _commands = [
             new CommandItem(new RaindropsPage()) { Title = DisplayName, Subtitle = RaindropsPage.PageSubtitle },
@@ -24,5 +24,4 @@ public partial class RaindropsCommandsProvider : CommandProvider
     {
         return _commands;
     }
-
 }

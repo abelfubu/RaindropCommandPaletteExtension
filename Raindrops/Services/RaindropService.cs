@@ -2,16 +2,13 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 using Raindrops.Models;
+using Raindrops.Extensions;
 
 namespace Raindrops.Services;
 
-internal sealed class RaindropService
+internal static class RaindropService
 {
     private static readonly HttpClient http = new();
-    private static readonly JsonSerializerOptions jsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
 
     public static async Task<ListItem[]> GetBookmarksAsync(
         string raindropApiKey,
@@ -24,7 +21,9 @@ internal sealed class RaindropService
         response.EnsureSuccessStatusCode();
 
         var json = await response.Content.ReadAsStringAsync(cancellationToken);
-        var raindropResponse = JsonSerializer.Deserialize(json, RaindropJsonContext.Default.RaindropResponse);
+        var raindropResponse = JsonSerializer.Deserialize(
+            json,
+            RaindropJsonContext.Default.RaindropResponse);
 
         return MapToListItems(raindropResponse);
     }
@@ -38,8 +37,6 @@ internal sealed class RaindropService
         return request;
     }
 
-    private static ListItem[] MapToListItems(RaindropResponse? response)
-    {
-        return [.. (response?.Items ?? []).Select(Raindrop.ToListItem)];
-    }
+    private static ListItem[] MapToListItems(RaindropResponse? response) =>
+        [.. (response?.Items ?? []).Select(i => i.ToListItem())];
 }

@@ -1,12 +1,10 @@
 using Microsoft.CommandPalette.Extensions;
 using Shmuelie.WinRTServer;
 using Shmuelie.WinRTServer.CsWinRT;
-using System;
-using System.Threading;
 
 namespace Raindrops;
 
-public class Program
+public static class Program
 {
     [MTAThread]
     public static void Main(string[] args)
